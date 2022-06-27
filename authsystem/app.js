@@ -2,7 +2,7 @@ require("dotenv").config();
 require('./config/database').connect()
 const express = require('express')
 const bcrypt = require('bcryptjs');
-const User = require('./model/User')
+const User = require('./model/user')
 const jwt = require('jsonwebtoken');
 const app = express();
 app.use(express.json());
@@ -24,16 +24,16 @@ app.post('/register',async(req,res)=>{
     const existingUser =await User.findOne({email});
 
     if(existingUser){
-        res.status(400).send('User already exists')
+        res.status(401).send('User already exists')
     }
     
     const myEncPassword = await bcrypt.hash(password,10)
-    const user= User.create({
+    const user= await User.create({
         firstname,
         lastname,
-        email,
-        password : myEncPassword 
-    })
+        email:email.toLowerCase(),
+        password : myEncPassword ,
+    });
     // token creation
     const token = jwt.sign(
         {user_id : user._id,email},
@@ -41,10 +41,13 @@ app.post('/register',async(req,res)=>{
         {
             expiresIn : "2h"
         }
-    )
-    user.token = token
-    res.status(201).json(user);
+    );
+    user.token = token;
 
+    // handle password situation 
+     user.password = undefined;
+
+    res.status(201).json(user);
 }
 catch (error) {
        console.log(error); 
