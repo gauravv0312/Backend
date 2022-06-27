@@ -1,0 +1,15 @@
+{
+  "name": "social",
+  "version": "1.0.0",
+  "description": "Basic social App",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "author": "Gaurav Verma",
+  "license": "ISC",
+  "dependencies": {
+    "date-format": "^4.0.10",
+    "express": "^4.18.1"
+  }
+}
