@@ -55,5 +55,34 @@ catch (error) {
 
     });
 
+app.post('/login',async(req,res)=>{
+  try {
+    const {email,password} = req.body;
+    if(!(email && password ))
+    {
+        res.status(400).send("Field is Missing")
+    }
+
+    const user = await User.findOne({email});
+
+    if(user && (await bcrypt.compare(password,user.password)))
+    {
+        const token = jwt.sign(
+            {user_id : user._id,email},
+            process.env.SECRET_KEY,
+            {
+                expiresIn : "2h",
+            }
+        );
+        user.token = token;
+        // user.password = undefined;
+        res.status(200).json(user);
+    }
+    res.send(400).send("Email or Password is incorrect");
+
+  } catch (error) {
+    console.log(error);
+  }
+})    
 module.exports = app;
  
