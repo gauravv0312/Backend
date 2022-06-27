@@ -3,6 +3,7 @@ require('./config/database').connect()
 const express = require('express')
 const bcrypt = require('bcryptjs');
 const User = require('./model/User')
+const jwt = require('jsonwebtoken');
 const app = express();
 app.use(express.json());
 
@@ -11,7 +12,9 @@ app.get('/',(req,res)=>{
 });
 
 app.post('/register',async(req,res)=>{
-    const {firstname,lastname,email,password} = req.body;
+     
+    try {
+        const {firstname,lastname,email,password} = req.body;
 
     if(!(firstname && lastname && email && password))
     {
@@ -25,12 +28,29 @@ app.post('/register',async(req,res)=>{
     }
     
     const myEncPassword = await bcrypt.hash(password,10)
-    User.create({
+    const user= User.create({
         firstname,
         lastname,
         email,
         password : myEncPassword 
     })
-})
+    // token creation
+    const token = jwt.sign(
+        {user_id : user._id,email},
+        process.env.SECRET_KEY,
+        {
+            expiresIn : "2h"
+        }
+    )
+    user.token = token
+    res.status(201).json(user);
+
+}
+catch (error) {
+       console.log(error); 
+    }
+
+    });
+
 module.exports = app;
  
