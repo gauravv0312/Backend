@@ -12,7 +12,7 @@ const mongoose = require("mongoose");
         type : String,
         unique : true,
     },
-    passwor : {
+    password : {
         type : String,
     },
     token :{
