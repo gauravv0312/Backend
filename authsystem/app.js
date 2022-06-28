@@ -79,14 +79,14 @@ app.post('/login',async(req,res)=>{
         // user.password = undefined;
         res.status(200).json(user);
     }
-    res.send(400).send("Email or Password is incorrect");
+    res.status(400).send("Email or Password is incorrect");
 
   } catch (error) {
     console.log(error);
   }
 })   
 
-app.get("/dashboard",(req, res) => {
+app.get("/dashboard",auth,(req, res) => {
     res.send("Welcome to secret information");
   });
 module.exports = app;
