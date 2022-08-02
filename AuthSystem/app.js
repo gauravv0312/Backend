@@ -76,7 +76,23 @@ app.post('/login',async(req,res)=>{
                 }
             )
             user.token = token
-            res.status(200).json(user)
+            // res.status(200).json(user);
+   
+            // use of cookies 
+
+            const options = {
+                expires: new Date(Date.now() + 3*24*60*60*1000),
+                httpOnly: true,   // to read the cookies from only backend
+            };
+
+            res.status(200).cookie("token",token,options).json(
+                {
+                    success : true,
+                    token,
+                    user,
+                }
+            );
+            
         }
         res.status(400).send('email or password is incorrect')
         
