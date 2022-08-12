@@ -108,21 +108,26 @@ app.post('/upload', upload.single('image'), (req, res, next) => {
 		}
 
 	}
-	imageModel.create(obj, (err, item) => {
-		if (err) {
-			console.log(err);
-		}
-		else {
-			// item.save();
-			buffer = obj.img.data;
-			console.log(obj.img.data);
-            imageModel.buffer = buffer;
-			res.send(obj);
-			console.log(obj._id);
-            // converting buffer into images
-            // fs.writeFileSync(`buffer/${obj.name}.jpg`,obj.img.data);
-		}
-	});
+	if(req.body.name)
+	{
+        imageModel.create(obj, (err, item) => {
+			if (err) {
+				console.log(err);
+			}
+			else {
+				// item.save();
+				buffer = obj.img.data;
+				console.log(obj.img.data);
+				res.send(req.file);
+				// converting buffer into images
+				// fs.writeFileSync(`buffer/${obj.name}.jpg`,obj.img.data);
+			}
+		});
+	}
+	else{
+		res.send("Name field is required")
+	}
+	
 });
 
 app.listen(PORT,()=>{
